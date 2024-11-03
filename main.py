@@ -1,4 +1,6 @@
-from backend import *
+import os
+from backend import create_db
 
-a = Person('Волкова','Александра', 'Владимировна')
-print(a.f_name_)
+if not os.path.isdir('participant.db'):
+    print('creating..')
+    create_db.create_database('participant.db')
