@@ -1,44 +1,64 @@
 from collections import namedtuple
+import sqlite3
 
 class Person:
     def __init__(self, fname, lname, email, **kwargs):
+        self.id=None
         self.userlname = lname
         self.userfname = fname
         self.email = email
+        self.conn = sqlite3.connect('participant.db')
         for key, value in kwargs.items():
             setattr(self, key, value)
+        self.find_in_db()
 
-    def find_in_db(self, conn):
+    def find_in_db(self):
+        if self.id is None:
+            existing_record = []
+            attributes = {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
+            del attributes['id']
+            del attributes['conn']
 
-        print(self.userfname)
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM Users WHERE (userfname, email) = (?,?)",
-                        (self.userfname, self.email))
-        existing_record = cursor.fetchone()
-        if existing_record is None:
-            return False
-        else:
-            self.id = existing_record[0]
-            return True
+            for atr in attributes:
+                print(attributes[atr])
+                cursor = self.conn.cursor()
+                cursor.execute(f"SELECT * FROM Users WHERE ({str(atr)}) = (?)",
+                                (attributes[atr],))
+                existing_record.append(cursor.fetchone())
 
 
-    def add_in_db(self, conn):
-        if not self.find_in_db(conn):
+        # # print(self.userfname)
+        # cursor = self.conn.cursor()
+        # cursor.execute("SELECT * FROM Users WHERE (userfname, email) = (?,?)",
+        #                 (self.userfname, self.email))
+        # existing_record = cursor.fetchone()
+        # # print(existing_record)
+        # if existing_record is None:
+        #     return False
+        # else:
+        #     self.id = existing_record[0]
+        #     return True
+        
+    # def chk_change_in_db(self):
+    #     print(1)
+
+    def add_in_db(self):
+        if not self.find_in_db():
             attributes = {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
 
             fields = ', '.join(attributes.keys())
             placeholders = ', '.join(['?'] * len(attributes))
             values = tuple(attributes.values())
 
-            print(fields)
+            # print(fields)
 
             cursor = conn.cursor()
             insert_query = f"INSERT INTO Users ({fields}) VALUES ({placeholders})"
             cursor.execute(insert_query, values)
-            # cursor.execute("CREATE UNIQUE INDEX idx_unique_name_email ON users (userlname, email)")
-            conn.commit()
+            
+            self.conn.commit()
         # else:
-        #     p
+        #     print(1)
 
 
     # def save_to_db(self, conn):

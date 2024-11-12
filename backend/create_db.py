@@ -9,8 +9,8 @@ def create_database(filename):
     CREATE TABLE IF NOT EXISTS Users (
     id INTEGER PRIMARY KEY,
     userfname TEXT NOT NULL,
-    usersname TEXT,
-    userlname TEXT,
+    usermname TEXT,
+    userlname TEXT NOT NULL,
     email TEXT NOT NULL,
     age INTEGER,
     docname INTEGER,

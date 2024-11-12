@@ -6,7 +6,7 @@ import sqlite3
 if not os.path.isdir('participant.db'):
         create_database('participant.db')
 
-a = [Person(fname='Саша', lname='Волкова', email='test@test.ru'), Person(fname='Андрей',  lname='Волкова', email='test@test.ru')]
+a = [Person(fname='Саша', lname='Волкова', email='test@test.ru', usermname='1'), Person(fname='Андрей',  lname='Волкова', email='test@test.ru')]
 
 conn = sqlite3.connect('participant.db')
 
