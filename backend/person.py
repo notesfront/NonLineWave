@@ -3,28 +3,36 @@ import sqlite3
 
 class Person:
     def __init__(self, fname, lname, email, **kwargs):
-        self.id=None
+        # print(fname)
+        self._id=None
         self.userlname = lname
         self.userfname = fname
         self.email = email
-        self.conn = sqlite3.connect('participant.db')
+        self._conn = sqlite3.connect('participant.db')
         for key, value in kwargs.items():
             setattr(self, key, value)
         self.find_in_db()
 
     def find_in_db(self):
-        if self.id is None:
-            existing_record = []
+        if self._id is None:
             attributes = {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
-            del attributes['id']
-            del attributes['conn']
+            existing_record = []
+            for t_atr in attributes:
+                print(t_atr)
+                print(attributes[t_atr])
 
-            for atr in attributes:
-                print(attributes[atr])
-                cursor = self.conn.cursor()
-                cursor.execute(f"SELECT * FROM Users WHERE ({str(atr)}) = (?)",
-                                (attributes[atr],))
-                existing_record.append(cursor.fetchone())
+                cursor = self._conn.cursor()
+                cursor.execute(f"SELECT * FROM Users WHERE ({t_atr}) = (?)",
+                                (attributes[t_atr],))
+                existing_record.append(cursor.fetchall())
+
+            all_empty = all(not inner for inner in existing_record)
+            
+            if all_empty:
+                print('пусто')
+                self.add_in_db()
+            else:
+                print('не пусто')
 
 
         # # print(self.userfname)
@@ -43,22 +51,18 @@ class Person:
     #     print(1)
 
     def add_in_db(self):
-        if not self.find_in_db():
-            attributes = {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
+    
+        attributes = {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
 
-            fields = ', '.join(attributes.keys())
-            placeholders = ', '.join(['?'] * len(attributes))
-            values = tuple(attributes.values())
+        fields = ', '.join(attributes.keys())
+        placeholders = ', '.join(['?'] * len(attributes))
+        values = tuple(attributes.values())
 
-            # print(fields)
-
-            cursor = conn.cursor()
-            insert_query = f"INSERT INTO Users ({fields}) VALUES ({placeholders})"
-            cursor.execute(insert_query, values)
-            
-            self.conn.commit()
-        # else:
-        #     print(1)
+        cursor = self._conn.cursor()
+        insert_query = f"INSERT INTO Users ({fields}) VALUES ({placeholders})"
+        cursor.execute(insert_query, values)
+        
+        self._conn.commit()
 
 
     # def save_to_db(self, conn):

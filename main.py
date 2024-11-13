@@ -10,6 +10,6 @@ a = [Person(fname='Саша', lname='Волкова', email='test@test.ru', user
 
 conn = sqlite3.connect('participant.db')
 
-for p in a:
-    p.add_in_db(conn)
-    # print(p.id)
+# for p in a:
+#     p.add_in_db(conn)
+#     # print(p.id)
