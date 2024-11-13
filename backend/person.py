@@ -3,7 +3,6 @@ import sqlite3
 
 class Person:
     def __init__(self, fname, lname, email, **kwargs):
-        # print(fname)
         self._id=None
         self.userlname = lname
         self.userfname = fname
@@ -24,6 +23,8 @@ class Person:
                 cursor = self._conn.cursor()
                 cursor.execute(f"SELECT * FROM Users WHERE ({t_atr}) = (?)",
                                 (attributes[t_atr],))
+                if cursor.fetchall()[0] in existing_record[:, 0]:
+                    print('test')
                 existing_record.append(cursor.fetchall())
 
             all_empty = all(not inner for inner in existing_record)
@@ -33,22 +34,8 @@ class Person:
                 self.add_in_db()
             else:
                 print('не пусто')
+                self.check_changes()
 
-
-        # # print(self.userfname)
-        # cursor = self.conn.cursor()
-        # cursor.execute("SELECT * FROM Users WHERE (userfname, email) = (?,?)",
-        #                 (self.userfname, self.email))
-        # existing_record = cursor.fetchone()
-        # # print(existing_record)
-        # if existing_record is None:
-        #     return False
-        # else:
-        #     self.id = existing_record[0]
-        #     return True
-        
-    # def chk_change_in_db(self):
-    #     print(1)
 
     def add_in_db(self):
     
@@ -64,6 +51,7 @@ class Person:
         
         self._conn.commit()
 
+    # def check_changes():
 
     # def save_to_db(self, conn):
     #     print(self.__dict__.items())
