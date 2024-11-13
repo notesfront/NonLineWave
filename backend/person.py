@@ -12,7 +12,7 @@ class Person:
             setattr(self, key, value)
         self.find_in_db()
 
-    def find_in_db(self):
+    def find_in_db_old(self):
         if self._id is None:
             attributes = {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
             existing_record = []
@@ -36,20 +36,45 @@ class Person:
                 print('не пусто')
                 self.check_changes()
 
+    def find_in_db(self):
+        if self._id is None:
+            attributes = {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
+            fields = ', '.join(attributes.keys())
+            placeholders = ', '.join(['?'] * len(attributes))
+            values = tuple(attributes.values())
+            # existing_record = []
+            cursor = self._conn.cursor()
+            cursor.execute(f"SELECT * FROM Users WHERE ({fields}) = ({placeholders})",
+                            (values))
+            existing_record = cursor.fetchall()
+            print(len(existing_record))
+            # if cursor.fetchall()[0] in existing_record[:, 0]:
+            #     print('test')
+            # existing_record.append(cursor.fetchall())
 
-    def add_in_db(self):
+            # all_empty = all(not inner for inner in existing_record)
+            
+            # if all_empty:
+            #     print('пусто')
+            #     self.add_in_db()
+            # else:
+            #     print('не пусто')
+            #     self.check_changes()
+
+
+    # def add_in_db(self):
     
-        attributes = {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
+    #     attributes = {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
 
-        fields = ', '.join(attributes.keys())
-        placeholders = ', '.join(['?'] * len(attributes))
-        values = tuple(attributes.values())
+    #     fields = ', '.join(attributes.keys())
+    #     placeholders = ', '.join(['?'] * len(attributes))
+    #     values = tuple(attributes.values())
 
-        cursor = self._conn.cursor()
-        insert_query = f"INSERT INTO Users ({fields}) VALUES ({placeholders})"
-        cursor.execute(insert_query, values)
+    #     cursor = self._conn.cursor()
+    #     insert_query = f"INSERT INTO Users ({fields}) VALUES ({placeholders})"
+    #     cursor.execute(insert_query, values)
         
-        self._conn.commit()
+    #     self._conn.commit()
 
     # def check_changes():
 
